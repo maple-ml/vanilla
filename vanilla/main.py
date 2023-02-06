@@ -181,5 +181,5 @@ def generate_bindings_from_file(filename):
 
 
 if __name__ == "__main__":
-    generate_bindings_from_file("bindings/geometrydash.van")
-    generate_bindings_from_file("bindings/cocos2d.van")
+    generate_bindings_from_file("../bindings/geometrydash.van")
+    generate_bindings_from_file("../bindings/cocos2d.van")
