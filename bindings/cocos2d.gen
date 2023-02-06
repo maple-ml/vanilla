@@ -1,0 +1,1509 @@
+set module_name = cocos2d;
+set imports = [];
+set binding_type = pure;
+
+class CCCopying {
+    CCObject* copyWithZone(CCZone* pZone);
+}
+
+class CCObject : CCCopying {
+    void release();
+    void retain();
+    CCObject* autorelease();
+    CCObject* copy();
+    bool isSingleReference();
+    uint retainCount();
+    bool isEqual(CCObject* pObject);
+    void acceptVisitor(CCDataVisitor &visitor);
+    void update(float dt);
+    int getTag();
+    void setTag(int nTag);
+    void setObjType(CCObjectType type);
+}
+
+class CCAction : CCObject {
+    void startWithTarget(CCNode* pTarget);
+    void stop();
+    void step(float dt);
+    bool isDone();
+    void update(float time);
+    CCAction* copy();
+    CCAction* getOriginalTarget();
+    CCAction* getTarget();
+    void setTarget(CCNode* pTarget);
+    void setOriginalTarget(CCNode* pTarget);
+}
+
+class CCFiniteTimeAction : CCAction {
+    float getDuration();
+    void setDuration(float duration);
+}
+
+class CCSpeed : CCAction {
+    bool initWithAction(CCAction* pAction, float fSpeed);
+    float getSpeed();
+    void setSpeed(float speed);
+    CCAction* getInnerAction();
+    void setInnerAction(CCAction* pAction);
+}
+
+class CCFollow : CCAction {
+    bool initWithTarget(CCNode* pFollowedNode, CONSTCCRect& rect);
+    void step(float dt);
+    bool isDone();
+    void stop();
+    void setBoudarySet(bool bValue);
+}
+
+class CCActionCamera : CCActionInterval {
+    void startWithTarget(CCNode* pTarget);
+    void stop();
+}
+
+class CCOrbitCamera : CCActionCamera {
+    overload bool initWithDuration(float t, float radius, float deltaRadius, float angleZ, float deltaAngleZ, float angleX, float deltaAngleX);
+    void sphericalRadius(float* r, float* zenith, float* azimuth);
+    void startWithTarget(CCNode* pTarget);
+    void update(float dt);
+    void sphericalRadius(float* r, float* zenith, float* azimuth);
+}
+
+class CCPointArray : CCObject {
+    bool initWithCapacity(int capacity);
+    void addControlPoint(CCPoint controlPoint);
+    void insertControlPoint(CCPoint controlPoint, int index);
+    void replaceControlPoint(CCPoint controlPoint, int index);
+    CCPoint getControlPointAtIndex(int index);
+    int count();
+    void reverse();
+    void reverseInline();
+    void getControlPoints(CCPoint** points, int* numPoints);
+}
+
+class CCCardinalSplineTo : CCActionInterval {
+    overload bool initWithDuration(float duration, CCPointArray* points, float tension);
+    void startWithTarget(CCNode* pTarget);
+    void update(float dt);
+    void setPoints(CCPointArray* points);
+}
+
+class CCCardinalSplineBy : CCCardinalSplineTo {
+    overload bool initWithDuration(float duration, CCPointArray* points, float tension);
+    void startWithTarget(CCNode* pTarget);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCCatmullRomTo : CCCardinalSplineTo {
+    overload bool initWithDuration(float dt, CCPointArray* points);
+    void startWithTarget(CCNode* pTarget);
+    void update(float dt);
+    void setPoints(CCPointArray* points);
+}
+
+class CCCatmullRomBy : CCCardinalSplineBy {
+    bool initWithDuration(float dt, CCPointArray* points);
+    void startWithTarget(CCNode* pTarget);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCActionEase : CCActionInterval {
+    CCActionInterval* getInnerAction();
+}
+
+class CCEaseRateAction : CCActionEase {
+    void setRate(float rate);
+    float getRate();
+}
+
+class CCEaseIn : CCActionEase {
+    bool initWithAction(CCActionInterval* pAction, float fRate);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCEaseOut : CCActionEase {
+    bool initWithAction(CCActionInterval* pAction, float fRate);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCEaseInOut : CCActionEase {
+    bool initWithAction(CCActionInterval* pAction, float fRate);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCEaseExponentialIn : CCActionEase {
+    bool initWithAction(CCActionInterval* pAction);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCEaseExponentialOut : CCActionEase {
+    bool initWithAction(CCActionInterval* pAction);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCEaseExponentialInOut : CCActionEase {
+    bool initWithAction(CCActionInterval* pAction);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCEaseSineIn : CCActionEase {
+    bool initWithAction(CCActionInterval* pAction);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCEaseSineOut : CCActionEase {
+    bool initWithAction(CCActionInterval* pAction);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCEaseSineInOut : CCActionEase {
+    bool initWithAction(CCActionInterval* pAction);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCEaseElastic : CCActionEase {
+    bool initWithAction(CCActionInterval* pAction, float fPeriod);
+    void setPeriod(float fPeriod);
+    float getPeriod();
+}
+
+class CCEaseElasticIn : CCActionEase {
+    bool initWithAction(CCActionInterval* pAction, float fPeriod);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCEaseElasticOut : CCActionEase {
+    bool initWithAction(CCActionInterval* pAction, float fPeriod);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCEaseElasticInOut : CCActionEase {
+    bool initWithAction(CCActionInterval* pAction, float fPeriod);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCEaseBounce : CCActionEase {
+    void bounceTime(float dt);
+}
+
+class CCEaseBounceIn : CCActionEase {
+    bool initWithAction(CCActionInterval* pAction);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCEaseBounceOut : CCActionEase {
+    bool initWithAction(CCActionInterval* pAction);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCEaseBounceInOut : CCActionEase {
+    bool initWithAction(CCActionInterval* pAction);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCEaseBackIn : CCActionEase {
+    bool initWithAction(CCActionInterval* pAction);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCEaseBackOut : CCActionEase {
+    bool initWithAction(CCActionInterval* pAction);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCEaseBackInOut : CCActionEase {
+    bool initWithAction(CCActionInterval* pAction);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCGridAction : CCActionInterval {
+    void startWithTarget(CCNode* pTarget);
+    CCGridBase* getGrid();
+    void setAmplitudeRate(float fAmplitudeRate);
+    float getAmplitudeRate();
+}
+
+class CCGrid3DAction : CCGridAction {
+    void setAmplitudeRate(float fAmplitudeRate);
+    float getAmplitudeRate();
+}
+
+class CCTiledGrid3DAction : CCGridAction {
+    void setAmplitudeRate(float fAmplitudeRate);
+    float getAmplitudeRate();
+}
+
+class CCAccelDeccelAmplitude : CCActionInterval {
+    bool initWithAction(CCActionInterval* pAction, float fDuration);
+    void setRate(float fRate);
+    float getRate();
+    void startWithTarget(CCNode* pTarget);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCAccelAmplitude : CCActionInterval {
+    bool initWithAction(CCActionInterval* pAction, float fDuration);
+    void setRate(float fRate);
+    float getRate();
+    void startWithTarget(CCNode* pTarget);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCDeccelAmplitude : CCActionInterval {
+    bool initWithAction(CCActionInterval* pAction, float fDuration);
+    void setRate(float fRate);
+    float getRate();
+    void startWithTarget(CCNode* pTarget);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCStopGrid : CCActionInstant {
+    void startWithTarget(CCNode* pTarget);
+}
+
+class CCReuseGrid : CCActionInstant {
+    bool initWithTimes(int nTimes);
+    void startWithTarget(CCNode* pTarget);
+}
+
+class CCWaves3D : CCGrid3DAction {
+    overload bool initWithDuration(float fDuration, CONSTCCSize& gridSize, uint waves, float amplitude);
+    void update(float dt);
+    CCActionInterval* copy();
+}
+
+class CCFlipX3D : CCGrid3DAction {
+    overload bool initWithDuration(float fDuration);
+    void update(float dt);
+    CCActionInterval* copy();
+}
+
+class CCFlipY3D : CCFlipX3D {
+    void update(float dt);
+    CCActionInterval* copy();
+}
+
+class CCLens3D : CCGrid3DAction {
+    overload bool initWithDuration(float fDuration, CONSTCCSize& gridSize, CONSTCCPoint& position, float radius);
+    void update(float dt);
+    CCActionInterval* copy();
+}
+
+class CCRipple3D : CCGrid3DAction {
+    overload bool initWithDuration(float fDuration, CONSTCCSize& gridSize, CONSTCCPoint& position, float radius, uint waves, float amplitude);
+    void update(float dt);
+    CCActionInterval* copy();
+}
+
+class CCShaky3D : CCGrid3DAction {
+    overload bool initWithDuration(float fDuration, CONSTCCSize& gridSize, int nRange, bool bShakeZ);
+    void update(float dt);
+    CCActionInterval* copy();
+}
+
+class CCLiquid : CCGrid3DAction {
+    overload bool initWithDuration(float fDuration, CONSTCCSize& gridSize, uint waves, float amplitude);
+    void update(float dt);
+    CCActionInterval* copy();
+}
+
+class CCWaves : CCGrid3DAction {
+    overload bool initWithDuration(float fDuration, CONSTCCSize& gridSize, uint waves, float amplitude, bool bHorizontal, bool bVertical);
+    void update(float dt);
+    CCActionInterval* copy();
+}
+
+class CCTwirl : CCGrid3DAction {
+    bool initWithDuration(float fDuration, CONSTCCSize& gridSize, CONSTCCPoint& position, uint nTwirls, float fAmplitude);
+    void update(float dt);
+    CCActionInterval* copy();
+}
+
+class CCActionInstant : CCFiniteTimeAction {
+    void step(float dt);
+    bool isDone();
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCShow : CCActionInstant {
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCHide : CCActionInstant {
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCToggleVisibility : CCActionInstant {
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCRemoveSelf : CCActionInstant {
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCFlipX : CCActionInstant {
+    bool initWithFlipX(bool x);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCFlipY : CCActionInstant {
+    bool initWithFlipY(bool y);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCPlace : CCActionInstant {
+    bool initWithPosition(CONSTCCPoint& pos);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCCallFunc : CCActionInstant {
+    bool initWithTarget(CCObject* pSelectorTarget, SEL_CallFunc pSelector);
+    void execute();
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCCallFuncN : CCCallFunc {
+    bool initWithTarget(CCObject* pSelectorTarget, SEL_CallFuncN pSelector);
+    void execute();
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCCallFuncND : CCCallFuncN {
+    bool initWithTarget(CCObject* pSelectorTarget, SEL_CallFuncND pSelector, void* pData);
+    void execute();
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCCallFuncO : CCCallFunc {
+    bool initWithTarget(CCObject* pSelectorTarget, SEL_CallFuncO pSelector, CCObject* pObject);
+    void execute();
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCActionInterval : CCFiniteTimeAction {
+    bool initWithDuration(float d);
+    float getElapsed();
+    bool isDone();
+    void step(float dt);
+    void startWithTarget(CCNode* pTarget);
+    CCActionInterval* reverse();
+    CCObject* copyWithZone(CCZone* pZone);
+    static CCActionInterval* create(float d);
+    void setAmplitudeRate(float amp);
+    float getAmplitudeRate();
+    //CCActionInterval* copy();
+}
+
+class CCSequence : CCActionInterval {
+    bool initWithTwoActions(CCActionInterval* pActionOne, CCActionInterval* pActionTwo);
+    void startWithTarget(CCNode* pTarget);
+    void stop();
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCRepeat : CCActionInterval {
+    bool initWithAction(CCActionInterval* pAction, int times);
+    void startWithTarget(CCNode* pTarget);
+    void stop();
+    void update(float dt);
+    bool isDone();
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCRepeatForever : CCActionInterval {
+    bool initWithAction(CCActionInterval* pAction);
+    void startWithTarget(CCNode* pTarget);
+    bool isDone();
+    void step(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCSpawn : CCActionInterval {
+    bool initWithTwoActions(CCActionInterval* pActionOne, CCActionInterval* pActionTwo);
+    void startWithTarget(CCNode* pTarget);
+    void stop();
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCRotateTo : CCActionInterval {
+    overload bool initWithDuration(float fDuration, float fDeltaAngle);
+    void startWithTarget(CCNode* pTarget);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCRotateBy : CCActionInterval {
+    overload bool initWithDuration(float fDuration, float fDeltaAngle);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCMoveBy : CCActionInterval {
+    overload bool initWithDuration(float fDuration, CONSTCCPoint& deltaPosition);
+    void startWithTarget(CCNode* pTarget);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCMoveTo : CCMoveBy {
+    overload bool initWithDuration(float fDuration, CONSTCCPoint& position);
+    void startWithTarget(CCNode* pTarget);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCSkewTo : CCActionInterval {
+    overload bool initWithDuration(float t, float sx, float sy);
+    void startWithTarget(CCNode* pTarget);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCSkewBy : CCSkewTo {
+    overload bool initWithDuration(float t, float sx, float sy);
+    void startWithTarget(CCNode* pTarget);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCJumpBy : CCActionInterval {
+    overload bool initWithDuration(float duration, CONSTCCPoint& position, float height, uint jumps);
+    void startWithTarget(CCNode* pTarget);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCJumpTo : CCJumpBy {
+    void startWithTarget(CCNode* pTarget);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCBezierBy : CCActionInterval {
+    overload bool initWithDuration(float t, CONSTccBezierConfig& c);
+    void startWithTarget(CCNode* pTarget);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCBezierTo : CCBezierBy {
+    overload bool initWithDuration(float t, CONSTccBezierConfig& c);
+    void startWithTarget(CCNode* pTarget);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCScaleTo : CCActionInterval {
+    overload bool initWithDuration(float fDuration, float sx, float sy);
+    void startWithTarget(CCNode* pTarget);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCScaleBy : CCScaleTo {
+    overload bool initWithDuration(float fDuration, float sx, float sy);
+    void startWithTarget(CCNode* pTarget);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCBlink : CCActionInterval {
+    overload bool initWithDuration(float fDuration, uint uBlinks);
+    void startWithTarget(CCNode* pTarget);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCTintTo : CCActionInterval {
+    overload bool initWithDuration(float fDuration, GLubyte red, GLubyte green, GLubyte blue);
+    void startWithTarget(CCNode* pTarget);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCTintBy : CCActionInterval {
+    overload bool initWithDuration(float fDuration, GLshort red, GLshort green, GLshort blue);
+    void startWithTarget(CCNode* pTarget);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCDelayTime : CCActionInterval {
+    overload bool initWithDuration(float fDuration);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCReverseTime : CCActionInterval {
+    bool initWithAction(CCActionInterval* pAction);
+    void startWithTarget(CCNode* pTarget);
+    void stop();
+    void update(float dt);
+    bool isDone();
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCAnimate : CCActionInterval {
+    bool initWithAnimation(CCAnimation* pAnimation);
+    void startWithTarget(CCNode* pTarget);
+    void stop();
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCTargetedAction : CCActionInterval {
+    bool initWithTarget(CCNode* pTarget, CCActionInterval* pAction);
+    void startWithTarget(CCNode* pTarget);
+    void stop();
+    void step(float dt);
+    bool isDone();
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCActionManager : CCObject {
+    void addAction(CCAction* pAction, CCNode* pTarget, bool paused);
+    void removeAction(CCAction* pAction);
+    void removeActionByTag(uint tag, CCNode* pTarget);
+    void removeAllActions();
+    void removeAllActionsFromTarget(CCNode* pTarget);
+    void removeAllActionsFromTarget(CCNode* pTarget, bool cleanup);
+    void pauseTarget(CCNode* pTarget);
+    void resumeTarget(CCNode* pTarget);
+    CCArray* pauseAllRunningActions();
+    void resumeTargets(CCArray* targetsToResume);
+}
+
+class CCPageTurn3D : CCGrid3DAction {
+    void update(float time);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCProgressTo : CCActionInterval {
+    overload bool initWithDuration(float duration, float fPercent);
+    void startWithTarget(CCNode* pTarget);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCProgressFromTo : CCActionInterval {
+    overload bool initWithDuration(float duration, float fFromPercentage, float fToPercentage);
+    void startWithTarget(CCNode* pTarget);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCShakyTiles3D : CCTiledGrid3DAction {
+    overload bool initWithDuration(float duration, CONSTCCSize& gridSize, int nRange, bool bShakeZ);
+    void update(float time);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCShatteredTiles3D : CCTiledGrid3DAction {
+    overload bool initWithDuration(float duration, CONSTCCSize& gridSize, int nRange, bool bShatterZ);
+    void update(float time);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+// TODO: fix whatever is wrong with this. nobody even uses it anyway.
+//i wonder if anyone will notice this message... i need to go to bed, i'm tired.
+//class CCShuffleTiles : CCTiledGrid3DAction {
+//    overload bool initWithDuration(float duration, CONSTCCSize& gridSize, uint nSeed);
+//    void shuffle(uint* pArray, uint nLen);
+//    void placeTile(CONSTCCPoint& pos, CONSTCCPoint& newPos);
+//    void startWithTarget(CCNode* pTarget);
+//    void update(float time);
+//    CCActionInterval* reverse();
+//    CCActionInterval* copy();
+//}
+
+class CCFadeOutTRTiles : CCFadeOutDownTiles {
+    void turnOnTile(CONSTCCPoint& pos);
+    void turnOffTile(CONSTCCPoint& pos);
+    void transformTile(CONSTCCPoint& pos, float distance);
+    void update(float time);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCFadeOutBLTiles : CCFadeOutTRTiles {
+    void transformTile(CONSTCCPoint& pos, float distance);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCFadeOutUpTiles : CCFadeOutTRTiles {
+    void transformTile(CONSTCCPoint& pos, float distance);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCFadeOutDownTiles : CCFadeOutUpTiles {
+    void transformTile(CONSTCCPoint& pos, float distance);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCTurnOffTiles : CCTiledGrid3DAction {
+    overload bool initWithDuration(float duration, CONSTCCSize& gridSize, uint nSeed);
+    void turnOnTile(CONSTCCPoint& pos);
+    void turnOffTile(CONSTCCPoint& pos);
+    void update(float time);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCWavesTiles3D : CCTiledGrid3DAction {
+    overload bool initWithDuration(float duration, CONSTCCSize& gridSize, uint waves, float amplitude);
+    void update(float time);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCJumpTiles3D : CCTiledGrid3DAction {
+    overload bool initWithDuration(float duration, CONSTCCSize& gridSize, uint nJumps, float amplitude);
+    void update(float time);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCSplitRows : CCTiledGrid3DAction {
+    overload bool initWithDuration(float duration, uint nRows);
+    void update(float time);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCSplitCols : CCTiledGrid3DAction {
+    overload bool initWithDuration(float duration, uint nCols);
+    void update(float time);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCActionTweenDelegate {
+    void updateTweenAction(float value, constchar* key);
+}
+
+class CCActionTween : CCActionInterval {
+    overload bool initWithDuration(float duration, constchar* key, float from, float to);
+    void startWithTarget(CCNode* pTarget);
+    void update(float dt);
+    CCActionInterval* reverse();
+    CCActionInterval* copy();
+}
+
+class CCAtlasNode : CCNodeRGBA, CCTextureProtocol {
+    static CCAtlasNode* create(constchar* tile, uint tileWidth, uint tileHeight, uint itemsToRender);
+    bool initWithTileFile(constchar* tile, uint tileWidth, uint tileHeight, uint itemsToRender);
+    bool initWithTexture(CCTexture2D* texture, uint tileWidth, uint tileHeight, uint itemsToRender);
+    void updateAtlasValues();
+    void draw();
+    void setTexture(CCTexture2D* texture);
+    CCTexture2D* getTexture();
+    bool isOpacityModifyRGB();
+    void setOpacityModifyRGB(bool bValue);
+    CONSTccColor3B& getColor();
+    void setColor(CONSTccColor3B& color);
+    void setOpacity(GLubyte opacity);
+}
+
+class CCNode : CCObject {
+    bool init();
+    static CCNode* create();
+    constchar* description();
+    void setZOrder(int z);
+    void _setZOrder(int z);
+    int getZOrder();
+    void setVertexZ(float vertexZ);
+    float getVertexZ();
+    void setScaleX(float fScaleX);
+    float getScaleX();
+    void setScaleY(float fScaleY);
+    float getScaleY();
+    overload void setScale(float fScale);
+    float getScale();
+    overload void setScale(float fScaleX, float fScaleY);
+    overload void setPosition(CONSTCCPoint& pos);
+    overload CONSTCCPoint& getPosition();
+    overload void setPosition(float x, float y);
+    void setPositionX(float x);
+    float getPositionX();
+    void setPositionY(float y);
+    float getPositionY();
+    void setSkewX(float sx);
+    float getSkewX();
+    void setSkewY(float sy);
+    float getSkewY();
+    void setAnchorPoint(CONSTCCPoint& anchor);
+    CONSTCCPoint& getAnchorPoint();
+    CONSTCCPoint& getAnchorPointInPoints();
+    void setContentSize(CONSTCCSize& size);
+    CONSTCCSize& getContentSize();
+    void setVisible(bool bVisible);
+    bool isVisible();
+    void setRotation(float fRotation);
+    float getRotation();
+    void setRotationX(float fRotationX);
+    float getRotationX();
+    void setRotationY(float fRotationY);
+    float getRotationY();
+    void setOrderOfArrival(uint uOrderOfArrival);
+    uint getOrderOfArrival();
+    void setGLServerState(ccGLServerState uGLServerState);
+    ccGLServerState getGLServerState();
+    void ignoreAnchorPointForPosition(bool value);
+    bool isIgnoreAnchorPointForPosition();
+    overload void addChild(CCNode* child);
+    overload void addChild(CCNode* child, int zOrder);
+    overload void addChild(CCNode* child, int zOrder, int tag);
+    CCNode* getChildByTag(int aTag);
+    CCArray* getChildren();
+    uint getChildrenCount();
+    void setParent(CCNode* parent);
+    CCNode* getParent();
+    void removeFromParent();
+    void removeFromParentAndCleanup(bool cleanup);
+    overload void removeChild(CCNode* child);
+    overload void removeChild(CCNode* child, bool cleanup);
+    overload void removeChildByTag(int tag);
+    overload void removeChildByTag(int tag, bool cleanup);
+    void removeAllChildren();
+    void removeAllChildrenWithCleanup(bool cleanup);
+    void reorderChild(CCNode* child, int zOrder);
+    void sortAllChildren();
+    CCGridBase* getGrid();
+    void setGrid(CCGridBase* pGrid);
+    int getTag();
+    void setTag(int tag);
+    void* getUserData();
+    void setUserData(void* pUserData);
+    CCObject* getUserObject();
+    void setUserObject(CCObject* pUserObject);
+    CCGLProgram* getShaderProgram();
+    void setShaderProgram(CCGLProgram* pShaderProgram);
+    CCCamera* getCamera();
+    bool isRunning();
+    // not adding lua script handlers
+    void onEnter();
+    void onEnterTransitionDidFinish();
+    void onExitTransitionDidStart();
+    void onExit();
+    void cleanup();
+    void draw();
+    void visit();
+    CCRect boundingBox();
+    void setActionManager(CCActionManager* pActionManager);
+    CCActionManager* getActionManager();
+    CCAction* runAction(CCAction* action);
+    void stopAllActions();
+    void stopAction(CCAction* action);
+    void stopActionByTag(int tag);
+    CCAction* getActionByTag(int tag);
+    uint numberOfRunningActions();
+    void setScheduler(CCScheduler* pScheduler);
+    CCScheduler* getScheduler();
+    //bool isScheduled(SEL_SCHEDULE selector);
+    void scheduleUpdate();
+    void scheduleUpdateWithPriority(int priority);
+    void unscheduleUpdate();
+    overload void schedule(SEL_SCHEDULE selector, float interval, uint repeat, float delay);
+    overload void schedule(SEL_SCHEDULE selector, float interval);
+    void scheduleOnce(SEL_SCHEDULE selector, float delay);
+    overload void schedule(SEL_SCHEDULE selector);
+    void unschedule(SEL_SCHEDULE selector);
+    void unscheduleAllSelectors();
+    void resumeSchedulerAndActions();
+    void pauseSchedulerAndActions();
+    void update(float dt);
+    void transform();
+    void transformAncestors();
+    void updateTransform();
+    CONSTCCAffineTransform nodeToParentTransform();
+    CONSTCCAffineTransform parentToNodeTransform();
+    CCAffineTransform nodeToWorldTransform();
+    CCAffineTransform worldToNodeTransform();
+    CCPoint convertToNodeSpace(CONSTCCPoint& worldPoint);
+    CCPoint convertToWorldSpace(CONSTCCPoint& nodePoint);
+    CCPoint convertToNodeSpaceAR(CONSTCCPoint& worldPoint);
+    CCPoint convertToWorldSpaceAR(CONSTCCPoint& nodePoint);
+    CCPoint convertTouchToNodeSpace(CCTouch* touch);
+    CCPoint convertTouchToNodeSpaceAR(CCTouch* touch);
+    void setAdditionalTransform(CONSTCCAffineTransform& additionalTransform);
+    CCComponent* getComponent(constchar* name);
+    bool addComponent(CCComponent* pComponent);
+    overload void removeComponent(constchar* name);
+    overload void removeComponent(CCComponent* pComponent);
+    void removeAllComponents();
+}
+
+class CCNodeRGBA : CCNode, CCRGBAProtocol {
+    bool init();
+    static CCNodeRGBA* create();
+    GLubyte getOpacity();
+    void setOpacity(GLubyte opacity);
+    CONSTccColor3B& getColor();
+    void setColor(CONSTccColor3B& color);
+    bool isCascadeColorEnabled();
+    void setCascadeColorEnabled(bool cascadeColorEnabled);
+    bool isCascadeOpacityEnabled();
+    void setCascadeOpacityEnabled(bool cascadeOpacityEnabled);
+    void updateDisplayedColor(CONSTccColor3B& parentColor);
+    void updateDisplayedOpacity(GLubyte parentOpacity);
+    CONSTccColor3B& getDisplayedColor();
+    GLubyte getDisplayedOpacity();
+    void setOpacityModifyRGB(bool bValue);
+    bool isOpacityModifyRGB();
+}
+
+class CCCamera : CCObject {
+    bool init();
+    constchar* description();
+    void restore();
+    void setDirty(bool bDirty);
+    bool isDirty();
+    void locate();
+    void setEyeXYZ(float fEyeX, float fEyeY, float fEyeZ);
+    void setCenterXYZ(float fCenterX, float fCenterY, float fCenterZ);
+    void setUpXYZ(float fUpX, float fUpY, float fUpZ);
+    void getEyeXYZ(float* fEyeX, float* fEyeY, float* fEyeZ);
+    void getCenterXYZ(float* fCenterX, float* fCenterY, float* fCenterZ);
+    void getUpXYZ(float* fUpX, float* fUpY, float* fUpZ);
+}
+
+// TOOD: implement CCConfiguration
+class CCConfiguration : CCObject {
+
+}
+
+class CCDirector : CCObject, TypeInfo {
+    bool init();
+    CCScene* getRunningScene();
+    double getAnimationInterval();
+    void setAnimationInterval(double dValue);
+    bool isDisplayStats();
+    void setDisplayStats(bool bDisplayStats);
+    float getSecondsPerFrame();
+    //CCEGLView* getOpenGLView();
+    void setOpenGLView(CCEGLView* pobOpenGLView);
+    bool isNextDeltaTimeZero();
+    void setNextDeltaTimeZero(bool bNextDeltaTimeZero);
+    bool isPaused();
+    uint getTotalFrames();
+    ccDirectorProjection getProjection();
+    void setProjection(ccDirectorProjection kProjection);
+    void reshapeProjection(CONSTCCSize& newWindowSize);
+    void setViewport();
+    bool isSendCleanupToScene();
+    CCNode* getNotificationNode();
+    void setNotificationNode(CCNode* node);
+    CCDirectorDelegate* getDelegate();
+    void setDelegate(CCDirectorDelegate* pDelegate);
+    CCSize getWinSize();
+    CCSize getWinSizeInPixels();
+    CCSize getVisibleSize();
+    CCPoint getVisibleOrigin();
+    CCPoint convertToGL(CONSTCCPoint& uiPoint);
+    CCPoint convertToUI(CONSTCCPoint& glPoint);
+    float getZEye();
+    void runWithScene(CCScene* pScene);
+    void pushScene(CCScene* pScene);
+    void popScene();
+    void popToRootScene();
+    void popToSceneStackLevel(int level);
+    bool replaceScene(CCScene* pScene);
+    void end();
+    void pause();
+    void resume();
+    // stop/start animation pure virtuals
+    void drawScene();
+    void purgeCachedData();
+    void setDefaultValues();
+    void setGLDefaultValues();
+    void setAlphaBlending(bool bOn);
+    void setDepthTest(bool bOn);
+    // mainloop pure virtual
+    void setContentScaleFactor(float contentScaleFactor);
+    float getContentScaleFactor();
+    void checkSceneReference();
+    CCScene* getNextScene();
+    int levelForSceneInStack(CCScene* pScene);
+    bool popSceneWithTransition(float value, CCTransitionScene* pTransition);
+    void popToSceneInStack(CCScene* pScene);
+    int sceneCount();
+    void willSwitchToScene(CCScene* pScene);
+    void removeStatsLabel();
+    void resetSmoothFixCounter();
+    void setDeltaTime(float dt);
+    void setupScreenScale(CCSize size1, CCSize size2, TextureQuality quality);
+    void updateContentScale(TextureQuality quality);
+    void updateScreenScale(CCSize size);
+    TextureQuality getLoadedTextureQuality();
+}
+
+class CCDisplayLinkDirector : CCDirector {
+    void mainLoop();
+    void setAnimationInterval(double dValue);
+    void startAnimation();
+    void stopAnimation();
+}
+
+class CCTimer : CCObject {
+    float getInterval();
+    void setInterval(float fInterval);
+    SEL_SCHEDULE getSelector();
+    overload bool initWithTarget(CCObject* pSelectorTarget, SEL_SCHEDULE pfnSelector);
+    overload bool initWithTarget(CCObject* pSelectorTarget, SEL_SCHEDULE pfnSelector, float fSeconds, uint nRepeat, float fDelay);
+    // TODO: fix unresolved externals
+    //staticoverload CCTimer* timerWithTarget(CCObject* pSelectorTarget, SEL_SCHEDULE pfnSelector);
+    //staticoverload CCTimer* timerWithTarget(CCObject* pSelectorTarget, SEL_SCHEDULE pfnSelector, float fSeconds);
+    void update(float dt);
+}
+
+class CCScheduler : CCObject {
+    float getTimeScale();
+    void setTimeScale(float fTimeScale);
+    void update(float dt);
+    overload void scheduleSelector(SEL_SCHEDULE pfnSelector, CCObject* pTarget, float fInterval, uint repeat, float delay, bool bPaused);
+    overload void scheduleSelector(SEL_SCHEDULE pfnSelector, CCObject* pTarget, float fInterval, bool bPaused);
+    void scheduleUpdateForTarget(CCObject* pTarget, int nPriority, bool bPaused);
+    void unscheduleSelector(SEL_SCHEDULE pfnSelector, CCObject* pTarget);
+    void unscheduleUpdateForTarget(CCObject* pTarget);
+    void unscheduleAllForTarget(CCObject* pTarget);
+    void unscheduleAll();
+    void unscheduleAllWithMinPriority(int nMinPriority);
+    void pauseTarget(CCObject* pTarget);
+    void resumeTarget(CCObject* pTarget);
+    bool isTargetPaused(CCObject* pTarget);
+    CCSet* pauseAllTargets();
+    CCSet* pauseAllTargetsWithMinPriority(int nMinPriority);
+    void resumeTargets(CCSet* targetsToResume);
+}
+
+// CCAffineTransform, struct (members not implemented yet in codegen)
+class CCAffineTransform {
+
+}
+
+class CCArray : CCObject {
+    staticoverload CCArray* create();
+    static CCArray* createWithObject(CCObject* pObject);
+    static CCArray* createWithCapacity(uint uCapacity);
+    static CCArray* createWithArray(CCArray* otherArray);
+    static CCArray* createWithContentsOfFile(constchar* pFileName);
+    static CCArray* createWithContentsOfFileThreadSafe(constchar* pFileName);
+    bool init();
+    bool initWithObject(CCObject* pObject);
+    bool initWithCapacity(uint uCapacity);
+    bool initWithArray(CCArray* otherArray);
+    uint count();
+    uint capacity();
+    uint indexOfObject(CCObject* pObject);
+    CCObject* objectAtIndex(uint uIndex);
+    CCObject* lastObject();
+    CCObject* randomObject();
+    bool containsObject(CCObject* pObject);
+    void addObject(CCObject* pObject);
+    void addObjectsFromArray(CCArray* otherArray);
+    void insertObject(CCObject* pObject, uint uIndex);
+    void removeObject(CCObject* pObject, bool bReleaseObj);
+    void removeObjectAtIndex(uint uIndex, bool bReleaseObj);
+    void removeLastObject(bool bReleaseObj);
+    void removeObjectsInArray(CCArray* otherArray);
+    void removeAllObjects();
+    void fastRemoveObject(CCObject* pObject);
+    void fastRemoveObjectAtIndex(uint uIndex);
+    void exchangeObject(CCObject* pObject1, CCObject* pObject2);
+    void exchangeObjectAtIndex(uint uIndex1, uint uIndex2);
+    void replaceObjectAtIndex(uint uIndex, CCObject* pObject, bool bReleaseObject);
+    void reverseObjects();
+    void reduceMemoryFootprint();
+    CCObject* copyWithZone(CCZone* pZone);
+    void acceptVisitor(CCDataVisitor& visitor);
+}
+
+class CCAutoreleasePool : CCObject {
+    void addObject(CCObject* pObject);
+    void removeObject(CCObject* pObject);
+    void clear();
+}
+
+class CCPoolManager {
+    void push();
+    void pop();
+    void pop(CCObject* pObject);
+    void removeObject(CCObject* pObject);
+}
+
+//class CCBool : CCObject {
+//    bool getValue();
+//    static CCBool* create(bool bValue);
+//}
+
+class CCDataVisitor {
+    overload void visit(CONSTCCBool* pObject);
+    overload void visit(CONSTCCInteger* pObject);
+    overload void visit(CONSTCCFloat* pObject);
+    overload void visit(CONSTCCDouble* pObject);
+    overload void visit(CONSTCCString* pObject);
+    overload void visit(CONSTCCArray* pObject);
+    overload void visit(CONSTCCDictionary* pObject);
+    overload void visit(CONSTCCSet* pObject);
+}
+
+class CCPrettyPrinter : CCDataVisitor {
+    void clear();
+    std::string getResult();
+    void visitObject(CCObject* pObject);
+    overload void visit(CONSTCCBool* pObject);
+    overload void visit(CONSTCCInteger* pObject);
+    overload void visit(CONSTCCFloat* pObject);
+    overload void visit(CONSTCCDouble* pObject);
+    overload void visit(CONSTCCString* pObject);
+    overload void visit(CONSTCCArray* pObject);
+    overload void visit(CONSTCCDictionary* pObject);
+    overload void visit(CONSTCCSet* pObject);
+}
+
+class CCDictElement {
+    CCObject* getObject();
+    constchar* getStrKey();
+    int getIntKey();
+}
+
+class CCDictionary : CCObject {
+    static CCDictionary* create();
+    static CCDictionary* createWithDictionary(CCDictionary* srcDict);
+    static CCDictionary* createWithContentsOfFile(constchar* pFileName);
+    static CCDictionary* createWithContentsOfFileThreadSafe(constchar* pFileName);
+    uint count();
+    overload CCObject* objectForKey(CONSTstdstring& key);
+    overload void setObject(CCObject* pObject, CONSTstdstring& key);
+    overload void removeObjectForKey(CONSTstdstring& key);
+    void removeAllObjects();
+    CCArray* allKeys();
+    CCArray* allKeysForObject(CCObject* pObject);
+    CCObject* copyWithZone(CCZone* pZone);
+    void acceptVisitor(CCDataVisitor& visitor);
+}
+
+//class CCDouble : CCObject {
+//    double getValue();
+//    static CCDouble* create(double dValue);
+//}
+
+//class CCFloat : CCObject {
+//    float getValue();
+//    static CCFloat* create(float fValue);
+//}
+
+// TODO: implement CCGeometry:
+
+// TODO: implement CCPoint
+class CCPoint {
+
+}
+
+// TODO: implement CCSize
+class CCSize {
+
+}
+
+// TODO: implement CCRect
+class CCRect {
+
+}
+
+class CCInteger : CCObject {
+    int getValue();
+    // TODO: fix unresolved external
+    //static CCInteger* create(int nValue);
+    void acceptVisitor(CCDataVisitor& visitor);
+}
+
+class CCSet : CCObject {
+    static CCSet* create();
+    uint count();
+    CCObject* anyObject();
+    bool containsObject(CCObject* pObject);
+    void addObject(CCObject* pObject);
+    void removeObject(CCObject* pObject);
+    void removeAllObjects();
+    CCObject* copyWithZone(CCZone* pZone);
+    void acceptVisitor(CCDataVisitor& visitor);
+}
+
+class CCString : CCObject {
+    constchar* getCString();
+    uint length();
+    static CCString* create(constchar* pStr);
+    //static CCString* createWithFormat(constchar* format, ...);
+    static CCString* createWithData(constunsignedchar* pData, uint uLen);
+    bool compare(constchar* pStr);
+    int intValue();
+    bool boolValue();
+    CCObject* copyWithZone(CCZone* pZone);
+    void acceptVisitor(CCDataVisitor& visitor);
+}
+
+// TODO: implement CCStringCompare
+
+class CCZone {
+
+}
+
+class CCDrawNode : CCNode {
+    bool init();
+    void draw();
+    void drawDot(CONSTCCPoint& point, float radius, CONSTCCColor4F& color);
+    void drawSegment(CONSTCCPoint& from, CONSTCCPoint& to, float radius, CONSTCCColor4F& color);
+    void drawPolygon(CCPoint* points, uint numberOfPoints, bool closePolygon, CONSTCCColor4F& color);
+    void clear();
+    void listenBackToForeground(CCObject* pObject);
+}
+
+// TODO: fix whats wrong with this class
+//class CCGrabber : CCObject {
+//    void grab(CCTexture2D* size);
+//    void beforeRender(CCTexture2D* pTexture);
+//    void afterRender(CCTexture2D* pTexture);
+//}
+
+class CCGridBase : CCObject {
+    overload bool initWithSize(CONSTCCSize& gridSize, CCTexture2D* pTexture, bool bFlipped);
+    overload bool initWithSize(CONSTCCSize& gridSize);
+    void set2DProjection();
+    void blit();
+    void reuse();
+    void calculateVertexPoints();
+}
+
+class CCGrid3D : CCGridBase {
+    overload bool initWithSize(CONSTCCSize& gridSize, CCTexture2D* pTexture, bool bFlipped);
+    overload bool initWithSize(CONSTCCSize& gridSize);
+    CCVertex3F originalVertex(CONSTCCPoint& pos);
+    CCVertex3F vertex(CONSTCCPoint& pos);
+    void setVertex(CONSTCCPoint& pos, CONSTCCVertex3F& vertex);
+    void blit();
+    void reuse();
+    void calculateVertexPoints();
+}
+
+class CCTiledGrid3D : CCGridBase {
+    overload bool initWithSize(CONSTCCSize& gridSize, CCTexture2D* pTexture, bool bFlipped);
+    overload bool initWithSize(CONSTCCSize& gridSize);
+    CCVertex3F originalTile(CONSTCCPoint& pos);
+    CCVertex3F tile(CONSTCCPoint& pos);
+    void setTile(CONSTCCPoint& pos, CONSTCCVertex3F& coords);
+    void blit();
+    void reuse();
+    void calculateVertexPoints();
+}
+
+class CCRGBAProtocol {
+    void setOpacity(GLubyte opacity);
+    GLubyte getOpacity();
+    void setColor(CONSTCCColor3B& color);
+    CONSTCCColor3B& getColor();
+    bool isCascadeColorEnabled();
+    void setCascadeColorEnabled(bool cascadeColorEnabled);
+    bool isCascadeOpacityEnabled();
+    void setCascadeOpacityEnabled(bool cascadeOpacityEnabled);
+}
+
+class CCBlendProtocol {
+    void setBlendFunc(CONSTccBlendFunc& blendFunc);
+    CONSTccBlendFunc& getBlendFunc();
+}
+
+class CCTextureProtocol {
+    void setTexture(CCTexture2D* pTexture);
+    CCTexture2D* getTexture();
+}
+
+class CCLabelProtocol  {
+    void setString(CONSTstdstring& label);
+    CONSTstdstring& getString();
+}
+
+class CCDirectorDelegate {
+    void updateProjection();
+}
+
+class TypeInfo {
+
+}
+
+// TODO: implment ccAnimationFrameData struct
+
+//class CCKeypadDelegate {
+//    void keyBackClicked();
+//    void keyMenuClicked();
+//}
+
+//class CCKeypadHandler : CCObject {
+//    CCKeypadDelegate* getDelegate();
+//    void setDelegate(CCKeypadDelegate* pDelegate);
+//    bool initWithDelegate(CCKeypadDelegate* pDelegate);
+//    static CCKeypadHandler* handlerWithDelegate(CCKeypadDelegate* pDelegate);
+//}
+
+class CCLabelAtlas : CCAtlasNode, CCLabelProtocol {
+    overload bool create(constchar* string, constchar* charMapFile, uint itemWidth, uint itemHeight, uint startCharMap);
+    overload bool create(constchar* string, constchar* fntFile);
+    overload bool initWithString(constchar* string, constchar* charMapFile, uint itemWidth, uint itemHeight, uint startCharMap);
+    overload bool initWithString(constchar* string, constchar* fntFile);
+    overload bool initWithString(constchar* string, CCTexture2D* texture, uint itemWidth, uint itemHeight, uint startCharMap);
+    void setString(constchar* label);
+    constchar* getString();
+    void updateAtlasValues();
+    void setOpacityModifyRGB(bool bValue);
+    bool isOpacityModifyRGB();
+    void setOpacity(GLubyte opacity);
+    GLubyte getOpacity();
+    void setColor(CONSTCCColor3B& color);
+    CONSTCCColor3B& getColor();
+    void setBlendFunc(CONSTccBlendFunc& blendFunc);
+    CONSTccBlendFunc& getBlendFunc();
+}
+
+class CCBMFontConfiguration : CCObject {
+    constchar* description();
+    bool initWithFNTfile(constchar* FNTfile);
+    constchar* getAtlasName();
+    void setAtlasName(constchar* atlasName);
+    // TODO: bind getCharacterSet
+    void release();
+    void retain();
+    CCObject* autorelease();
+    CCObject* copy();
+    bool isSingleReference();
+    uint retainCount();
+    bool isEqual(CCObject* pObject);
+    void acceptVisitor(CCDataVisitor& visitor);
+    void update(float dt);
+}
+
+class CCLabelBMFont : CCSpriteBatchNode, CCLabelProtocol, CCRGBAProtocol {
+    staticoverload CCLabelBMFont* create(constchar* str, constchar* fntFile, float width, CCTextAlignment alignment, CCPoint imageOffset);
+    staticoverload CCLabelBMFont* create(constchar* str, constchar* fntFile, float width, CCTextAlignment alignment);
+    staticoverload CCLabelBMFont* create(constchar* str, constchar* fntFile, float width);
+    staticoverload CCLabelBMFont* create(constchar* str, constchar* fntFile);
+    staticoverload CCLabelBMFont* create();
+    bool init();
+    //TODO: bind initwithstring
+    void createFontChars();
+    overload void setString(constchar* newString);
+    overload void setString(constchar* newString, bool needUpdateLabel);
+    constchar* getString();
+    void setCString(constchar* label);
+    void setAnchorPoint(CONSTCCPoint& point);
+    void updateLabel();
+    void setAlignment(CCTextAlignment alignment);
+    void setWidth(float width);
+    void setLineBreakWithoutSpace(bool breakWithoutSpace);
+    void setScale(float scale);
+    void setScaleX(float fScaleX);
+    void setScaleY(float fScaleY);
+    bool isOpacityModifyRGB();
+    void setOpacityModifyRGB(bool bValue);
+    GLuBye getDisplayedOpacity();
+    void setOpacity(GLubyte opacity);
+    void updateDisplayedOpacity(GLubyte parentOpacity);
+    bool isCascadeOpacityEnabled();
+    void setCascadeOpacityEnabled(bool cascadeOpacityEnabled);
+    CONSTCCColor3B& getColor();
+    CONSTCCColor3B& getDisplayedColor();
+    void setColor(CONSTCCColor3B& color);
+    void updateDisplayedColor(CONSTCCColor3B& parentColor);
+    bool isCascadeColorEnabled();
+    void setCascadeColorEnabled(bool cascadeColorEnabled);
+    void setFntFile(constchar* fntFile);
+    constchar* getFntFile();
+    CCBMFontConfiguration* getConfiguration();
+}
+
+class CCLabelTTF : CCSprite, CCLabelProtocol {
+    constchar* description();
+    staticoverload CCLabelTTF* create(constchar* string, constchar* fontName, float fontSize);
+    staticoverload CCLabelTTF* create(constchar* string, constchar* fontName, float fontSize, CONSTCCSize& dimensions, CCTextAlignment hAlignment);
+    staticoverload CCLabelTTF* create(constchar* string, constchar* fontName, float fontSize, CONSTCCSize& dimensions, CCTextAlignment hAlignment, CCVerticalTextAlignment vAlignment);
+    overload bool initWithString(constchar* string, constchar* fontName, float fontSize);
+    overload bool initWithString(constchar* string, constchar* fontName, float fontSize, CONSTCCSize& dimensions, CCTextAlignment hAlignment);
+    overload bool initWithString(constchar* string, constchar* fontName, float fontSize, CONSTCCSize& dimensions, CCTextAlignment hAlignment, CCVerticalTextAlignment vAlignment);
+    void setTextDefinition(CONSTccFontDefinition& theDefinition);
+    CONSTccFontDefinition& getTextDefinition();
+    void enableShadow(CONSTCCSize& shadowOffset, float shadowOpacity, float shadowBlur, bool mustUpdateTexture);
+    void disableShadow(bool mustUpdateTexture);
+    void enableStroke(CONSTCCColor3B& strokeColor, float strokeSize, bool mustUpdateTexture);
+    void disableStroke(bool mustUpdateTexture);
+    void setFontFillColor(CONSTCCColor3B& tintColor, bool mustUpdateTexture);
+    bool init();
+    void setString(constchar* label);
+    constchar* getString();
+    CCTextAlignment getHorizontalAlignment();
+    void setHorizontalAlignment(CCTextAlignment alignment);
+    CCVerticalTextAlignment getVerticalAlignment();
+    void setVerticalAlignment(CCVerticalTextAlignment verticalAlignment);
+    void setDimensions(CONSTCCSize& dim);
+    CONSTCCSize& getDimensions();
+    void setFontSize(float fontSize);
+    float getFontSize();
+    void setFontName(CONSTstdstring& fontName);
+    CONSTstdstring& getFontName();
+}
+
+class CCLayer : CCNode, CCTouchDelegate, CCAccelerometerDelegate, CCKeypadDelegate {
+    bool init();
+    void onEnter();
+    void onExit();
+    void onEnterTransitionDidFinish();
+    void ccTouchesBegan(CCSet* touches, CCEvent* event);
+    void ccTouchesMoved(CCSet* touches, CCEvent* event);
+    void ccTouchesEnded(CCSet* touches, CCEvent* event);
+    void ccTouchesCancelled(CCSet* touches, CCEvent* event);
+    void ccTouchBegan(CCTouch* touch, CCEvent* event);
+    void ccTouchMoved(CCTouch* touch, CCEvent* event);
+    void ccTouchEnded(CCTouch* touch, CCEvent* event);
+    void ccTouchesCancelled(CCSet* touches, CCEvent* event);
+    void didAccelerate(CCAcceleration* pAccelerationValue);
+    // skip lua handler
+    bool isTouchEnabled();
+    void setTouchEnabled(bool value);
+    void setTouchMode(CCTouchMode mode);
+    CCTouchMode getTouchMode();
+    void setTouchPriority(int priority);
+    int getTouchPriority();
+    bool isAccelerometerEnabled();
+}
+
+class CCLayerRGBA : CCLayer, CCRGBAProtocol {
+    bool init();
+    bool isOpacityModifyRGB();
+    void setOpacityModifyRGB(bool bValue);
+    GLubyte getOpacity();
+    void setOpacity(GLubyte opacity);
+    CONSTCCColor3B& getColor();
+    void setColor(CONSTCCColor3B& color);
+}
+
+class CCLayerColor : CCLayerRGBA, CCBlendProtocol {
+    staticoverload CCLayerColor* create(CONSTCCColor4B& color, float width, float height);
+    staticoverload CCLayerColor* create(CONSTCCColor4B& color);
+    staticoverload CCLayerColor* create();
+    bool init();
+    void changeWidthAndHeight(float w, float h);
+    void changeWidth(float w);
+    void changeHeight(float h);
+    void setBlendFunc(CONSTccBlendFunc& blendFunc);
+    CONSTccBlendFunc& getBlendFunc();
+    void setOpacity(GLubyte opacity);
+    void setColor(CONSTCCColor3B& color);
+    void setOpacityModifyRGB(bool bValue);
+    bool isOpacityModifyRGB();
+}
+
+//class CCLayerGradient : CCLayerColor {
+//    staticoverload CCLayerGradient* create(CONSTCCColor4B& start, CONSTCCColor4B& end);
+//    staticoverload CCLayerGradient* create(CONSTCCColor4B& start, CONSTCCColor4B& end, CONSTCCPoint& v);
+//    bool init();
+//    void setStartColor(CONSTCCColor3B& startColor);
+//    CONSTCCColor3B& getStartColor();
+//    void setEndColor(CONSTCCColor3B& endColor);
+//    CONSTCCColor3B& getEndColor();
+//    void setStartOpacity(GLubyte startOpacity);
+//    GLubyte getStartOpacity();
+//    void setEndOpacity(GLubyte endOpacity);
+//    GLubyte getEndOpacity();
+//    void setVector(CONSTCCPoint& alongVector);
+//    CONSTCCPoint& getVector();
+//    void setCompressedInterpolation(bool compress);
+//    bool isCompressedInterpolation();
+//}
+
+// https://docs.cocos2d-x.org/api-ref/cplusplus/V2.2.3/annotated.html
