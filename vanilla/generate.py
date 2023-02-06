@@ -116,9 +116,9 @@ namespace pybind = pybind11;
 
     out += "}"
 
-    if not os.path.exists("../src/bindings/"):
-        os.mkdir("../src/bindings/")
-    open(f"../src/bindings/{options['module_name']}_bindings.h", "w").write(out)
+    if not os.path.exists("vanilla/bindings/"):
+        os.mkdir("vanilla/bindings/")
+    open(f"vanilla/bindings/{options['module_name']}_bindings.h", "w").write(out)
 
 def generate_pure_bindings(functions, classes, attrs, options):
     out = f"""// AUTOMATICALLY GENERATED PURE BINDING for "{options['module_name']}" module
