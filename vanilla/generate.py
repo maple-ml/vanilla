@@ -114,6 +114,9 @@ namespace pybind = pybind11;
             # name
             out += f'    {class_.name.lower()}.attr("{func.name}N") = {class_.name}::{func.name}N;\n'
 
+            # hook
+            out += f"cinnamon::hooks::hookCinnamon((PVOID){class_.name}::{func.name}A, {class_.name}::{func.name}H, (LPVOID*){class_.name}::{func.name}O_, );"
+
     out += "}"
 
     if not os.path.exists("../../src/bindings/"):
