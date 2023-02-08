@@ -1444,8 +1444,7 @@ class CCLabelBMFont : CCSpriteBatchNode, CCLabelProtocol, CCRGBAProtocol {
     CCBMFontConfiguration* getConfiguration();
 }
 
-// TODO: implement CCSprite
-class CCSprite {
+class CCSprite : CCNodeRGBA, CCTextureProtocol {
     staticoverload CCSprite* create();
     staticoverload CCSprite* create(constchar* pszFileName);
     staticoverload CCSprite* create(constchar* pszFileName, CONSTCCRect& rect);

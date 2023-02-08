@@ -2,10 +2,10 @@ set module_name = geometrydash;
 set imports = [cocos2d];
 set binding_type = hook;
 
-class PlayerObject : CCNode {
-    void pushButton(void* PlayerButton) = 0x1f4e40;
+class PlayerObject : CCSprite {
+    void pushButton(PlayerObject* self, void* PlayerButton) = 0x1f4e40;
 }
 
-class MenuLayer : CCNode {
-    bool init() = 0x1907B0;
+class MenuLayer : CCLayer {
+    bool init(MenuLayer* self) = 0x1907b0;
 }
