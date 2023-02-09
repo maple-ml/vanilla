@@ -22,7 +22,7 @@ class FLAlertLayer : CCLayerColor {
     bool init(FLAlertLayer* self, FLAlertLayerProtocol* protocol, constchar* title, std::string content, constchar* button1, constchar* button2, float width, bool scrollable, float height) = 0x228e0;
 
     void onBtn1(FLAlertLayer* self, CCObject* sender) = 0x22a00;
-    void onBtn2(FLAlertLayer* self, CCObject* sender)) = 0x22a10;
+    void onBtn2(FLAlertLayer* self, CCObject* sender) = 0x22a10;
 
     void onEnter(FLAlertLayer* self) = 0x23750;
     bool ccTouchBegan(CCTouch* touch, CCEvent* event) = 0x233c0;
