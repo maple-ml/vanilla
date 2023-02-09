@@ -9,3 +9,28 @@ class PlayerObject : CCSprite {
 class MenuLayer : CCLayer {
     bool init(MenuLayer* self) = 0x1907b0;
 }
+
+class FLAlertLayerProtocol {
+    
+}
+
+class FLAlertLayer : CCLayerColor {
+    static FLAlertLayer* create(FLAlertLayerProtocol* protocol, constchar* title, std::string content, constchar* button1, constchar* button2) = 0x22680;
+    static FLAlertLayer* create(FLAlertLayerProtocol* protocol, constchar* title, std::string content, constchar* button1, constchar* button2, float width) = 0x22730;
+    static FLAlertLayer* create(FLAlertLayerProtocol* protocol, constchar* title, std::string content, constchar* button1, constchar* button2, float width, float height, bool scrollable, float height) = 0x227e0;
+
+    bool init(FLAlertLayer* self, FLAlertLayerProtocol* protocol, constchar* title, std::string content, constchar* button1, constchar* button2, float width, bool scrollable, float height) = 0x228e0;
+
+    void onBtn1(FLAlertLayer* self, CCObject* sender) = 0x22a00;
+    void onBtn2(FLAlertLayer* self, CCObject* sender)) = 0x22a10;
+
+    void onEnter(FLAlertLayer* self) = 0x23750;
+    bool ccTouchBegan(CCTouch* touch, CCEvent* event) = 0x233c0;
+    void ccTouchMoved(CCTouch* touch, CCEvent* event) = 0x23510;
+    void ccTouchEnded(CCTouch* touch, CCEvent* event) = 0x23450;
+    void ccTouchCancelled(CCTouch* touch, CCEvent* event) = 0x234c0;
+    void registerWithTouchDispatcher(FLAlertLayer* self) = 0x236f0;
+    void keyBackClicked(FLAlertLayer* self) = 0x232c0;
+    void keyDown(FLAlertLayer* self, int key) = 0x23250;
+    void show(FLAlertLayer* self) = 0x23560;
+}
