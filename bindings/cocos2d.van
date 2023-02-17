@@ -983,6 +983,7 @@ class TypeInfo {
 
 class CCDirector : CCObject, TypeInfo {
     bool init();
+    static CCDirector* sharedDirector();
     CCScene* getRunningScene();
     double getAnimationInterval();
     void setAnimationInterval(double dValue);
