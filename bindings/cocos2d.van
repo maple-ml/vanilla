@@ -1560,6 +1560,10 @@ class CCLayerColor : CCLayerRGBA, CCBlendProtocol {
     bool isOpacityModifyRGB();
 }
 
+class CCScene : CCNode {
+    bool create();
+}
+
 //class CCLayerGradient : CCLayerColor {
 //    staticoverload CCLayerGradient* create(CONSTCCColor4B& start, CONSTCCColor4B& end);
 //    staticoverload CCLayerGradient* create(CONSTCCColor4B& start, CONSTCCColor4B& end, CONSTCCPoint& v);
