@@ -36,7 +36,12 @@ class GenParser(Parser):
         arr = []
         if p.expr0:
             arr = [p.expr0[1]]
-            for obj in p._5_repeat:
+            try:
+                objs = p._5_repeat
+            except AttributeError:
+                objs = p._5_222c22_expr_repeat
+            
+            for obj in objs:
                 arr.append(obj[1][1])
         return (exprs.ARRAY, arr)
     
