@@ -136,10 +136,12 @@ class GenExecute:
                 Runtime.current_class = None
 
             case [exprs.ATTR, name, value]:
+                Runtime.attrs[self.evaluate(name)] = self.evaluate(value)
+
+            case [exprs.MEMBER, name, visibility]:
                 if Runtime.current_class:
-                    Runtime.current_class.attrs[self.evaluate(name)] = self.evaluate(value)
-                else:
-                    Runtime.attrs[self.evaluate(name)] = self.evaluate(value)
+                    Runtime.current_class.members.append((self.evaluate(visibility), self.evaluate(name)))
+
 
 
 def generate_bindings_from_file(filename):

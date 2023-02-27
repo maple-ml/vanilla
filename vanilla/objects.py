@@ -14,6 +14,7 @@ class exprs(Enum):
     ENDCLASS = 12
     ARRAY = 13
     ATTR = 14
+    MEMBER = 15
 
 class Function:
     def __init__(self, class_: str, type: str, name: str, args: List[Tuple[str, str]], address: int, calling_conv: str = "__thiscall") -> None:
@@ -54,7 +55,7 @@ class Function:
         return f"{self.type} {self.class_}::{self.name}({', '.join(self.args_name_and_types)})"
 
 class Class:
-    def __init__(self, name: str, parents: List[str], functions: List[Function]=None, attrs: Dict[str, str]=None) -> None:
+    def __init__(self, name: str, parents: List[str], functions: List[Function]=None, members: Dict[str, str]=None) -> None:
         self.name: str = name
         self.parents: List[str] = parents
         if functions:
@@ -62,10 +63,10 @@ class Class:
         else:
             self.functions: List[Function] = []
         
-        if attrs:
-            self.attrs: Dict[str, str] = attrs
+        if members:
+            self.members: Dict[str, str] = members
         else:
-            self.attrs: Dict[str, str] = {}
+            self.members: Dict[str, str] = []
 
 
     def __repr__(self) -> str:

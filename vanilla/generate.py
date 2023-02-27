@@ -199,6 +199,13 @@ namespace pybind = pybind11;
             else:
                 out += f'    {class_.name.lower()}.def("{func.name}", &{class_.name}::{func.name}, pybind::return_value_policy::automatic_reference);\n'
 
+        for member in class_.members:
+            match member[0]:
+                case "rw":
+                    out += f'    {class_.name.lower()}.def_readwrite("{member[1]}", &{class_.name}::{member[1]});\n'
+                case "ro":
+                    out += f'    {class_.name.lower()}.def_readonly("{member[1]}", &{class_.name}::{member[1]});\n'
+
     out += "}"
 
     if not os.path.exists("../../src/bindings"):

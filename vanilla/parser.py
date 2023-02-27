@@ -78,14 +78,14 @@ class GenParser(Parser):
     def expr(self, p):
         if p.expr0[1] == "set":
             return (exprs.EQUALS, p.expr1, p.expr2)
-        elif p.expr0[1] == "attr":
-            return (exprs.ATTR, p.expr1, p.expr2)
         elif p.expr0[1] == "static":
             return (exprs.EQUALS, p.expr0, p.expr1, ["static"])
         elif p.expr0[1] == "overload":
             return (exprs.EQUALS, p.expr0, p.expr1, ["overload"])
         elif p.expr0[1] == "staticoverload":
             return (exprs.EQUALS, p.expr0, p.expr1, ["static", "overload"])
+        elif p.expr2[1] in ["rw", "ro"]: # member (type name = rw|ro)
+            return (exprs.MEMBER, p.expr1, p.expr2)
 
     @_('expr "=" expr')
     def expr(self, p):

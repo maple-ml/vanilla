@@ -1205,19 +1205,19 @@ class CCDictionary : CCObject {
 
 // TODO: implement CCGeometry:
 
-// TODO: implement CCPoint
 class CCPoint {
-
+    float x = rw;
+    float y = rw;
 }
 
-// TODO: implement CCSize
 class CCSize {
-    
+    float width = rw;
+    float height = rw;
 }
 
-// TODO: implement CCRect
 class CCRect {
-
+    CCPoint origin = rw;
+    CCSize size = rw;
 }
 
 class CCInteger : CCObject {
