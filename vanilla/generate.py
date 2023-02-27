@@ -172,11 +172,11 @@ namespace pybind = pybind11;
 
     for func in functions:
         if func.overload and not func.static:
-            out += f'    {class_.name.lower()}.def("{func.name}", pybind::overload_cast<{join_list(func.args_types)}>(&{func.name}));\n'
+            out += f'    {class_.name.lower()}.def("{func.name}", pybind::overload_cast<{join_list(func.args_types)}>(&{func.name}), pybind::return_value_policy::automatic_reference);\n'
         elif func.static and not func.overload:
             out += f'    {class_.name.lower()}.def_static("{func.name}", &{func.name});\n'
         elif func.static and func.overload:
-            out += f'    {class_.name.lower()}.def_static("{func.name}", pybind::overload_cast<{join_list(func.args_types)}>(&{func.name}));\n'
+            out += f'    {class_.name.lower()}.def_static("{func.name}", pybind::overload_cast<{join_list(func.args_types)}>(&{func.name}), pybind::return_value_policy::automatic_reference);\n'
         else:
             out += f'    {class_.name.lower()}.def("{func.name}", &{func.name});\n'
 
@@ -191,13 +191,13 @@ namespace pybind = pybind11;
 
         for func in class_.functions:
             if func.overload and not func.static:
-                out += f'    {class_.name.lower()}.def("{func.name}", pybind::overload_cast<{join_list(func.args_types)}>(&{class_.name}::{func.name}));\n'
+                out += f'    {class_.name.lower()}.def("{func.name}", pybind::overload_cast<{join_list(func.args_types)}>(&{class_.name}::{func.name}), pybind::return_value_policy::automatic_reference);\n'
             elif func.static and not func.overload:
-                out += f'    {class_.name.lower()}.def_static("{func.name}", &{class_.name}::{func.name});\n'
+                out += f'    {class_.name.lower()}.def_static("{func.name}", &{class_.name}::{func.name}, pybind::return_value_policy::automatic_reference);\n'
             elif func.static and func.overload:
-                out += f'    {class_.name.lower()}.def_static("{func.name}", pybind::overload_cast<{join_list(func.args_types)}>(&{class_.name}::{func.name}));\n'
+                out += f'    {class_.name.lower()}.def_static("{func.name}", pybind::overload_cast<{join_list(func.args_types)}>(&{class_.name}::{func.name}), pybind::return_value_policy::automatic_reference);\n'
             else:
-                out += f'    {class_.name.lower()}.def("{func.name}", &{class_.name}::{func.name});\n'
+                out += f'    {class_.name.lower()}.def("{func.name}", &{class_.name}::{func.name}, pybind::return_value_policy::automatic_reference);\n'
 
     out += "}"
 

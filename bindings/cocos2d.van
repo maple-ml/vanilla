@@ -1212,7 +1212,7 @@ class CCPoint {
 
 // TODO: implement CCSize
 class CCSize {
-
+    
 }
 
 // TODO: implement CCRect
