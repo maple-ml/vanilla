@@ -11,6 +11,7 @@ def generate_hook_bindings(classes, options):
 #include "core/hooks.h"
 #include "pybind11.h"
 #include "pybind11/embed.h"
+#include "bindings/manual_bindings.h"
 
 USING_NS_CC;
 namespace pybind = pybind11;
@@ -75,8 +76,6 @@ namespace pybind = pybind11;
             # name
             out += f'    CINNAMON_API static inline const char* {func.name}N = "{func.name}H";\n'
 
-            # TODO: add cinnamon hooking with minhook/util func
-
             out += ""
 
         out += "};\n\n"
@@ -120,6 +119,8 @@ namespace pybind = pybind11;
             # hook
             out += f"    cinnamon::hooks::hookCinnamon((PVOID){class_.name}::{func.name}A, {class_.name}::{func.name}H, (LPVOID*)&{class_.name}::{func.name}O_);\n"
 
+    out += f"\n    manualbindings::{options['module_name']}_init(m);\n"
+
     out += "}"
 
     if not os.path.exists("../../src/bindings/"):
@@ -134,6 +135,7 @@ def generate_pure_bindings(functions, classes, attrs, options):
 #include "core/hooks.h"
 #include "pybind11.h"
 #include "pybind11/embed.h"
+#include "bindings/manual_bindings.h"
 
 USING_NS_CC;
 namespace pybind = pybind11;
@@ -205,6 +207,8 @@ namespace pybind = pybind11;
                     out += f'    {class_.name.lower()}.def_readwrite("{member[1]}", &{class_.name}::{member[1]});\n'
                 case "ro":
                     out += f'    {class_.name.lower()}.def_readonly("{member[1]}", &{class_.name}::{member[1]});\n'
+
+    out += f"\n    manualbindings::{options['module_name']}_init(m);\n"
 
     out += "}"
 

@@ -1582,4 +1582,21 @@ class CCScene : CCNode {
 //    bool isCompressedInterpolation();
 //}
 
+class CCMenu : CCLayerRGBA {
+    staticoverload CCMenu* create();
+    //staticoverload CCMenu* create(CCMenuItem* item, ...);
+    staticoverload CCMenu* createWithArray(CCArray* pArrayOfItems);
+    staticoverload CCMenu* createWithItem(CCMenuItem* item);
+    //staticoverload CCMenu* createWithItems(CCMenuItem* item, va_list args);
+    bool init();
+    bool initWithArray(CCArray* pArrayOfItems);
+    void alignItemsVertically();
+    void alignItemsVerticallyWithPadding(float padding);
+    void alignItemsHorizontally();
+    void alignItemsHorizontallyWithPadding(float padding);
+    //void alignItemsInColumns(int columns, ...);
+    //void alignItemsInRows(int rows, ...);
+    void setHandlerPriority(int newPriority);
+}
+
 // https://docs.cocos2d-x.org/api-ref/cplusplus/V2.2.3/annotated.html
