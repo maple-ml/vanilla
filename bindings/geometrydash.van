@@ -1,4 +1,4 @@
-set module_name = geometrydash;
+set module_name = geometry_dash;
 set imports = [cocos2d];
 set binding_type = hook;
 
