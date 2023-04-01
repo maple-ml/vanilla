@@ -3,6 +3,10 @@ import os
 def join_list(iter):
     return ", ".join(iter)
 
+def dedent(string: str):
+    string = string.replace("    ", "")
+    return string.replace("\n", "")
+
 def generate_hook_bindings(classes, options):
     out = f"""// AUTOMATICALLY GENERATED HOOK BINDING for "{options['module_name']}" module
 #pragma once
@@ -49,34 +53,224 @@ namespace pybind = pybind11;
         # just don't even try to scroll sideways
         for func in class_.functions:
             # call
-            out += f"    CINNAMON_API {func.type} {func.name}({join_list(func.args_name_and_types)}) {{ "
-            out += f"return reinterpret_cast<{func.type}({func.calling_conv}*)({join_list(func.args_types)})>(cinnamon::utilities::base + {func.address})({join_list(func.args_names)}); }}\n"
+            out += "    "
+            out += dedent(f"""CINNAMON_API {func.type} {func.name}({join_list(func.args_name_and_types)}) {{ 
+                return reinterpret_cast<{func.type}({func.calling_conv}*)({join_list(func.args_types)})>
+                (cinnamon::utilities::base + {func.address})({join_list(func.args_names)});
+            }} """)
 
             # hook overload
-            out += f'    CINNAMON_API static inline std::pair<std::string, size_t> {func.name}(pybind::function hook) {{ return std::pair<std::string, size_t>("{func.class_}::{func.name}H", cinnamon::utilities::base + {func.address}); }}\n'
+            out += dedent(f'''CINNAMON_API static inline std::pair<std::string, size_t> {func.name}(pybind::function hook) {{
+                return std::pair<std::string, size_t>("{func.class_}::{func.name}H", cinnamon::utilities::base + {func.address});
+            }} ''')
 
             # hook
             if func.type == "void":
-                out += f"    CINNAMON_API static {func.type} __fastcall {func.name}H({join_list(func.args_name_and_types)}) {{ std::multimap<std::string, void*>::iterator itr; for (itr = cinnamon::hooks::hooks.begin(); itr != cinnamon::hooks::hooks.end(); ++itr) {{ if (itr->first == __FUNCTION__) {{ reinterpret_cast<{func.type}(*)({join_list(func.args_types)})>(itr->second)({join_list(func.args_names)}); }} }} if (cinnamon::hooks::hooks.count(__FUNCTION__) == 0) {{ std::multimap<std::string, pybind::function>::iterator pyitr; for (pyitr = cinnamon::hooks::pythonHooks.begin(); pyitr != cinnamon::hooks::pythonHooks.end(); ++pyitr) {{ if (pyitr->first == __FUNCTION__) {{ pybind::gil_scoped_acquire acquire; pyitr->second({join_list(func.args_names)}).cast<{func.type}>(); pybind::gil_scoped_release release; return; }} }} }} return {func.name}O_({join_list(func.args_names)}); }}\n"
+                out += dedent(f"""CINNAMON_API static {func.type} __fastcall {func.name}H({join_list(func.args_name_and_types)}) {{
+                    std::multimap<std::string, void*>::iterator itr;
+                    for (itr = cinnamon::hooks::hooks.begin(); itr != cinnamon::hooks::hooks.end(); ++itr) {{
+                        if (itr->first == __FUNCTION__) {{
+                            reinterpret_cast<{func.type}(*)({join_list(func.args_types)})>(itr->second)({join_list(func.args_names)});
+                        }}
+                    }}
+                    if (cinnamon::hooks::hooks.count(__FUNCTION__) == 0) {{
+                        std::multimap<std::string, pybind::function>::iterator pyitr;
+                        for (pyitr = cinnamon::hooks::pythonHooks.begin(); pyitr != cinnamon::hooks::pythonHooks.end(); ++pyitr) {{
+                            if (pyitr->first == __FUNCTION__) {{
+                                try {{
+                                    pybind::gil_scoped_acquire acquire;
+                                    pyitr->second({join_list(func.args_names)}).cast<{func.type}>();
+                                    pybind::gil_scoped_release release;
+                                    return;
+                                }}
+                                catch (pybind::error_already_set& e) {{
+                                    cinnamon::logger::log("An exception occurred while calling a python hook: \\n" + std::string(e.what()), cinnamon::logger::LoggingLevel::ERROR);
+                                }}
+                            }}
+                        }}
+                    }}
+                    return {func.name}O_({join_list(func.args_names)});
+                }} """)
             else:
-                out += f"    CINNAMON_API static {func.type} __fastcall {func.name}H({join_list(func.args_name_and_types)}) {{ std::multimap<std::string, void*>::iterator itr; for (itr = cinnamon::hooks::hooks.begin(); itr != cinnamon::hooks::hooks.end(); ++itr) {{ if (itr->first == __FUNCTION__) {{ reinterpret_cast<{func.type}(*)({join_list(func.args_types)})>(itr->second)({join_list(func.args_names)}); }} }} if (cinnamon::hooks::hooks.count(__FUNCTION__) == 0) {{ std::multimap<std::string, pybind::function>::iterator pyitr; for (pyitr = cinnamon::hooks::pythonHooks.begin(); pyitr != cinnamon::hooks::pythonHooks.end(); ++pyitr) {{ if (pyitr->first == __FUNCTION__) {{ pybind::gil_scoped_acquire acquire; {func.type} ret = pyitr->second({join_list(func.args_names)}).cast<{func.type}>(); pybind::gil_scoped_release release; return ret; }} }} }} return {func.name}O_({join_list(func.args_names)}); }}\n"
+                out += dedent(f"""CINNAMON_API static {func.type} __fastcall {func.name}H({join_list(func.args_name_and_types)}) {{
+                    std::multimap<std::string, void*>::iterator itr;
+                    for (itr = cinnamon::hooks::hooks.begin(); itr != cinnamon::hooks::hooks.end(); ++itr) {{
+                        if (itr->first == __FUNCTION__) {{
+                            reinterpret_cast<{func.type}(*)({join_list(func.args_types)})>(itr->second)({join_list(func.args_names)});
+                        }}
+                    }}
+                    if (cinnamon::hooks::hooks.count(__FUNCTION__) == 0) {{
+                        std::multimap<std::string, pybind::function>::iterator pyitr;
+                        for (pyitr = cinnamon::hooks::pythonHooks.begin(); pyitr != cinnamon::hooks::pythonHooks.end(); ++pyitr) {{
+                            if (pyitr->first == __FUNCTION__) {{
+                                try {{
+                                    pybind::gil_scoped_acquire acquire;
+                                    {func.type} ret = pyitr->second({join_list(func.args_names)}).cast<{func.type}>();
+                                    pybind::gil_scoped_release release;
+                                    return ret;
+                                }}
+                                catch (pybind::error_already_set& e) {{
+                                    cinnamon::logger::log("An exception occurred while calling a python hook: \\n" + std::string(e.what()), cinnamon::logger::LoggingLevel::ERROR);
+                                }}
+                            }}
+                        }}
+                    }}
+                    return {func.name}O_({join_list(func.args_names)});
+                }} """)
 
             # original
-            out += f"    CINNAMON_API static inline {func.type}(__thiscall* {func.name}O_)({join_list(func.args_types)});\n"
+            out += f"    CINNAMON_API static inline {func.type}(__thiscall* {func.name}O_)({join_list(func.args_types)}); "
 
             # original part 2 (god save me)
             if func.type == "void":
-                out += f'    CINNAMON_API static inline int {func.name}C = 1; CINNAMON_API static void __fastcall {func.name}O({join_list(func.args_name_and_types)}) {{ std::multimap<std::string, void*>::iterator itr; int itr2 = 0; for (itr = cinnamon::hooks::hooks.begin(); itr != cinnamon::hooks::hooks.end(); ++itr) {{ if (cinnamon::hooks::hooks.count("{func.class_}::{func.name}H") == {func.name}C) {{ std::multimap<std::string, pybind::function>::iterator pyitr; for (pyitr = cinnamon::hooks::pythonHooks.begin(); pyitr != cinnamon::hooks::pythonHooks.end(); ++pyitr) {{ if (cinnamon::hooks::pythonHooks.count("{func.class_}::{func.name}H")+cinnamon::hooks::hooks.count("{func.class_}::{func.name}H") == {func.name}C) {{ {func.name}C = 1; return {func.name}O_({join_list(func.args_names)}); }} if (pyitr->first == "{func.class_}::{func.name}H") {{ if (itr2 == {func.name}C) {{ {func.name}C++; pybind::gil_scoped_acquire acquire; pyitr->second({join_list(func.args_names)}); pybind::gil_scoped_release release; }} itr2++; }} }} }} if (itr->first == "{func.class_}::{func.name}H") {{ if (itr2 == {func.name}C) {{ {func.name}C++; {func.type}(*hook)({join_list(func.args_types)}) = ({func.type}(*)({join_list(func.args_types)}))itr->second; }} itr2++; }} }} if (cinnamon::hooks::pythonHooks.count("{func.class_}::{func.name}H")+cinnamon::hooks::hooks.count("{func.class_}::{func.name}H") == {func.name}C) {{ {func.name}O_({join_list(func.args_names)}); {func.name}C = 1; return; }} return {func.name}O_({join_list(func.args_names)}); }} \n'
-            else:
-                out += f'    CINNAMON_API static inline int {func.name}C = 1; CINNAMON_API static {func.type} __fastcall {func.name}O({join_list(func.args_name_and_types)}) {{ std::multimap<std::string, void*>::iterator itr; int itr2 = 0; for (itr = cinnamon::hooks::hooks.begin(); itr != cinnamon::hooks::hooks.end(); ++itr) {{ if (cinnamon::hooks::hooks.count("{func.class_}::{func.name}H") == {func.name}C) {{ std::multimap<std::string, pybind::function>::iterator pyitr; for (pyitr = cinnamon::hooks::pythonHooks.begin(); pyitr != cinnamon::hooks::pythonHooks.end(); ++pyitr) {{ if (cinnamon::hooks::pythonHooks.count("{func.class_}::{func.name}H")+cinnamon::hooks::hooks.count("{func.class_}::{func.name}H") == {func.name}C) {{ {func.name}C = 1; return {func.name}O_({join_list(func.args_names)}); }} if (pyitr->first == "{func.class_}::{func.name}H") {{ if (itr2 == {func.name}C) {{ {func.name}C++; pybind::gil_scoped_acquire acquire; pyitr->second({join_list(func.args_names)}); pybind::gil_scoped_release release; }} itr2++; }} }} }} if (itr->first == "{func.class_}::{func.name}H") {{ if (itr2 == {func.name}C) {{ {func.name}C++; {func.type}(*hook)({join_list(func.args_types)}) = ({func.type}(*)({join_list(func.args_types)}))itr->second; }} itr2++; }} }} if (cinnamon::hooks::pythonHooks.count("{func.class_}::{func.name}H")+cinnamon::hooks::hooks.count("{func.class_}::{func.name}H") == {func.name}C) {{ {func.type} ret = {func.name}O_({join_list(func.args_names)}); {func.name}C = 1; return ret; }} return {func.name}O_({join_list(func.args_names)}); }} \n'
+                out += dedent(f'''CINNAMON_API static inline int {func.name}C = 1;
+                CINNAMON_API static void __fastcall {func.name}O({join_list(func.args_name_and_types)}) {{
+                    std::multimap<std::string, void*>::iterator itr;
+                    int itr2 = 0;
+                    for (itr = cinnamon::hooks::hooks.begin(); itr != cinnamon::hooks::hooks.end(); ++itr) {{
+                        if (cinnamon::hooks::hooks.count("{func.class_}::{func.name}H") <= {func.name}C) {{
+                            std::multimap<std::string, pybind::function>::iterator pyitr;
+                            for (pyitr = cinnamon::hooks::pythonHooks.begin(); pyitr != cinnamon::hooks::pythonHooks.end(); ++pyitr) {{
+                                if (cinnamon::hooks::pythonHooks.count("{func.class_}::{func.name}H")
+                                +cinnamon::hooks::hooks.count("{func.class_}::{func.name}H") == {func.name}C) {{
+                                    {func.name}C = 1;
+                                    return {func.name}O_({join_list(func.args_names)});
+                                }}
+                                if (pyitr->first == "{func.class_}::{func.name}H") {{
+                                    if (itr2+cinnamon::hooks::hooks.count("{func.class_}::{func.name}H") == {func.name}C) {{
+                                        {func.name}C++;
+                                        try {{
+                                            pybind::gil_scoped_acquire acquire;
+                                            pyitr->second({join_list(func.args_names)});
+                                            pybind::gil_scoped_release release;
+                                        }}
+                                        catch (pybind::error_already_set& e) {{
+                                            cinnamon::logger::log("An exception occurred while calling a python hook: \\n" + std::string(e.what()), cinnamon::logger::LoggingLevel::ERROR);
+                                        }}
+                                    }}
+                                    itr2++;
+                                }}
+                            }}
+                        }}
+                        if (itr->first == "{func.class_}::{func.name}H") {{
+                            if (itr2 == {func.name}C) {{
+                                {func.name}C++;
+                                {func.type}(*hook)({join_list(func.args_types)}) = ({func.type}(*)({join_list(func.args_types)}))itr->second;
+                            }}
+                            itr2++;
+                        }}
+                    }}
+                    if (cinnamon::hooks::hooks.count("{func.class_}::{func.name}H") == 0) {{
+                        std::multimap<std::string, pybind::function>::iterator pyitr;
+                        for (pyitr = cinnamon::hooks::pythonHooks.begin(); pyitr != cinnamon::hooks::pythonHooks.end(); ++pyitr) {{
+                            if (pyitr->first == "{func.class_}::{func.name}H") {{
+                                if (cinnamon::hooks::hooks.count("{func.class_}::{func.name}H")
+                                +cinnamon::hooks::pythonHooks.count("{func.class_}::{func.name}H")) {{
+                                    {func.name}C = 1;
+                                    return {func.name}O_({join_list(func.args_names)});
+                                }}
+                                if (itr2+cinnamon::hooks::hooks.count("{func.class_}::{func.name}H") == {func.name}C) {{
+                                    {func.name}C++;
+                                    try {{
+                                        pybind::gil_scoped_acquire acquire;
+                                        pyitr->second({join_list(func.args_names)});
+                                        pybind::gil_scoped_release release;
+                                    }}
+                                    catch (pybind::error_already_set& e) {{
+                                        cinnamon::logger::log("An exception occurred while calling a python hook: \\n" + std::string(e.what()), cinnamon::logger::LoggingLevel::ERROR);
+                                    }}
+                                }}
+                                itr2++;
+                            }}
+                        }}
+                    }}
+
+                    if (cinnamon::hooks::pythonHooks.count("{func.class_}::{func.name}H")
+                    +cinnamon::hooks::hooks.count("{func.class_}::{func.name}H") == {func.name}C) {{
+                        {func.name}O_({join_list(func.args_names)});
+                        {func.name}C = 1;
+                        return;
+                    }}
+                    return {func.name}O_({join_list(func.args_names)});
+                }} ''')
+            else: # nonvoid
+                out += dedent(f'''CINNAMON_API static inline int {func.name}C = 1;
+                CINNAMON_API static {func.type} __fastcall {func.name}O({join_list(func.args_name_and_types)}) {{
+                    std::multimap<std::string, void*>::iterator itr;
+                    int itr2 = 0;
+                    for (itr = cinnamon::hooks::hooks.begin(); itr != cinnamon::hooks::hooks.end(); ++itr) {{
+                        if (cinnamon::hooks::hooks.count("{func.class_}::{func.name}H") <= {func.name}C) {{
+                            std::multimap<std::string, pybind::function>::iterator pyitr;
+                            for (pyitr = cinnamon::hooks::pythonHooks.begin(); pyitr != cinnamon::hooks::pythonHooks.end(); ++pyitr) {{
+                                if (cinnamon::hooks::pythonHooks.count("{func.class_}::{func.name}H")
+                                +cinnamon::hooks::hooks.count("{func.class_}::{func.name}H") == {func.name}C) {{
+                                    {func.name}C = 1;
+                                    return {func.name}O_({join_list(func.args_names)});
+                                }}
+                                if (pyitr->first == "{func.class_}::{func.name}H") {{
+                                    if (itr2+cinnamon::hooks::hooks.count("{func.class_}::{func.name}H") == {func.name}C) {{
+                                        {func.name}C++;
+                                        try {{
+                                            pybind::gil_scoped_acquire acquire;
+                                            pyitr->second({join_list(func.args_names)});
+                                            pybind::gil_scoped_release release;
+                                        }}
+                                        catch (pybind::error_already_set& e) {{
+                                            cinnamon::logger::log("An exception occurred while calling a python hook: \\n" + std::string(e.what()), cinnamon::logger::LoggingLevel::ERROR);
+                                        }}
+                                    }}
+                                    itr2++;
+                                }}
+                            }}
+                        }}
+                        if (itr->first == "{func.class_}::{func.name}H") {{
+                            if (itr2 == {func.name}C) {{
+                                {func.name}C++;
+                                {func.type}(*hook)({join_list(func.args_types)}) = ({func.type}(*)({join_list(func.args_types)}))itr->second;
+                            }}
+                            itr2++;
+                        }}
+                    }}
+
+                    if (cinnamon::hooks::hooks.count("{func.class_}::{func.name}H") == 0) {{
+                        std::multimap<std::string, pybind::function>::iterator pyitr;
+                        for (pyitr = cinnamon::hooks::pythonHooks.begin(); pyitr != cinnamon::hooks::pythonHooks.end(); ++pyitr) {{
+                            if (cinnamon::hooks::pythonHooks.count("{func.class_}::{func.name}H")
+                            +cinnamon::hooks::hooks.count("{func.class_}::{func.name}H") == {func.name}C) {{
+                                {func.name}C = 1;
+                                return {func.name}O_({join_list(func.args_names)});
+                            }}
+                            if (pyitr->first == "{func.class_}::{func.name}H") {{
+                                if (itr2+cinnamon::hooks::hooks.count("{func.class_}::{func.name}H") == {func.name}C) {{
+                                    {func.name}C++;
+                                    try {{
+                                        pybind::gil_scoped_acquire acquire;
+                                        pyitr->second({join_list(func.args_names)});
+                                        pybind::gil_scoped_release release;
+                                    }}
+                                    catch (pybind::error_already_set& e) {{
+                                        cinnamon::logger::log("An exception occurred while calling a python hook: \\n" + std::string(e.what()), cinnamon::logger::LoggingLevel::ERROR);
+                                    }}
+                                }}
+                                itr2++;
+                            }}
+                        }}
+                    }}
+
+                    if (cinnamon::hooks::pythonHooks.count("{func.class_}::{func.name}H")
+                    +cinnamon::hooks::hooks.count("{func.class_}::{func.name}H") == {func.name}C) {{
+                        {func.type} ret = {func.name}O_({join_list(func.args_names)});
+                        {func.name}C = 1;
+                        return ret;
+                    }}
+                    return {func.name}O_({join_list(func.args_names)});
+                }} ''')
 
             # address
-            out += f"    CINNAMON_API static inline size_t {func.name}A = cinnamon::utilities::base + {func.address};\n"
+            out += f"CINNAMON_API static inline size_t {func.name}A = cinnamon::utilities::base + {func.address}; "
 
             # name
-            out += f'    CINNAMON_API static inline const char* {func.name}N = "{func.name}H";\n'
-
-            out += ""
+            out += f'CINNAMON_API static inline const char* {func.name}N = "{func.name}H";\n'
 
         out += "};\n\n"
 
