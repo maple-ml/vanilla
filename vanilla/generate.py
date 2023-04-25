@@ -12,6 +12,7 @@ def generate_hook_bindings(classes, options):
 #pragma once
 #include <cocos2d.h>
 #include "core/utilities/game.h"
+#include "core/python.h"
 #include "core/hooks.h"
 #include "pybind11.h"
 #include "pybind11/embed.h"
@@ -84,7 +85,8 @@ namespace pybind = pybind11;
                                     return;
                                 }}
                                 catch (pybind::error_already_set& e) {{
-                                    cinnamon::logger::log("An exception occurred while calling a python hook: \\n" + std::string(e.what()), cinnamon::logger::LoggingLevel::ERROR);
+                                    cinnamon::logger::log("An exception occurred while calling a python hook:", cinnamon::logger::LoggingLevel::ERROR);
+                                    cinnamon::python::printPythonException(e);
                                 }}
                             }}
                         }}
@@ -110,7 +112,8 @@ namespace pybind = pybind11;
                                     return ret;
                                 }}
                                 catch (pybind::error_already_set& e) {{
-                                    cinnamon::logger::log("An exception occurred while calling a python hook: \\n" + std::string(e.what()), cinnamon::logger::LoggingLevel::ERROR);
+                                    cinnamon::logger::log("An exception occurred while calling a python hook:", cinnamon::logger::LoggingLevel::ERROR);
+                                    cinnamon::python::printPythonException(e);
                                 }}
                             }}
                         }}
@@ -145,7 +148,8 @@ namespace pybind = pybind11;
                                             pybind::gil_scoped_release release;
                                         }}
                                         catch (pybind::error_already_set& e) {{
-                                            cinnamon::logger::log("An exception occurred while calling a python hook: \\n" + std::string(e.what()), cinnamon::logger::LoggingLevel::ERROR);
+                                            cinnamon::logger::log("An exception occurred while calling a python hook:", cinnamon::logger::LoggingLevel::ERROR);
+                                            cinnamon::python::printPythonException(e);
                                         }}
                                     }}
                                     itr2++;
@@ -177,7 +181,8 @@ namespace pybind = pybind11;
                                         pybind::gil_scoped_release release;
                                     }}
                                     catch (pybind::error_already_set& e) {{
-                                        cinnamon::logger::log("An exception occurred while calling a python hook: \\n" + std::string(e.what()), cinnamon::logger::LoggingLevel::ERROR);
+                                        cinnamon::logger::log("An exception occurred while calling a python hook:", cinnamon::logger::LoggingLevel::ERROR);
+                                        cinnamon::python::printPythonException(e);
                                     }}
                                 }}
                                 itr2++;
@@ -216,7 +221,8 @@ namespace pybind = pybind11;
                                             pybind::gil_scoped_release release;
                                         }}
                                         catch (pybind::error_already_set& e) {{
-                                            cinnamon::logger::log("An exception occurred while calling a python hook: \\n" + std::string(e.what()), cinnamon::logger::LoggingLevel::ERROR);
+                                            cinnamon::logger::log("An exception occurred while calling a python hook:", cinnamon::logger::LoggingLevel::ERROR);
+                                            cinnamon::python::printPythonException(e);
                                         }}
                                     }}
                                     itr2++;
@@ -249,7 +255,8 @@ namespace pybind = pybind11;
                                         pybind::gil_scoped_release release;
                                     }}
                                     catch (pybind::error_already_set& e) {{
-                                        cinnamon::logger::log("An exception occurred while calling a python hook: \\n" + std::string(e.what()), cinnamon::logger::LoggingLevel::ERROR);
+                                        cinnamon::logger::log("An exception occurred while calling a python hook:", cinnamon::logger::LoggingLevel::ERROR);
+                                        cinnamon::python::printPythonException(e);
                                     }}
                                 }}
                                 itr2++;
