@@ -116,8 +116,9 @@ namespace vanilla {
         for (Field f : c.fields) {
             FunctionProto* func = f.get_fn();
             FunctionBindField* bind = f.get_as<FunctionBindField>();
-            if (func && bind && bind->binds.win != 0) {
+            if (func && bind && bind->binds.win != 0 && func->ret.name != "TodoReturn") {
                 std::cout << "Found function " << func->name << std::endl;
+                std::cout << "L: " << func->ret.name << std::endl;
 
                 std::string static_ = "";
 
@@ -503,7 +504,7 @@ namespace vanilla {
             FunctionProto* func = f.get_fn();
             FunctionBindField* bind = f.get_as<FunctionBindField>();
 
-            if (func && bind && bind->binds.win != 0) {
+            if (func && bind && bind->binds.win != 0 && func->ret.name != "TodoReturn") {
                 // check if we've already iterated this function
                 // because we don't generate overloads for the same function
                 // since we don't support that just yet
@@ -739,7 +740,11 @@ namespace vanilla {
     }
 
     void generate(std::string filename, std::string header_filename, std::string module_filename) {
+        std::cout << "Parsing " << filename << "..." << std::endl;
+
         Root root = broma::parse_file(filename);
+
+        std::cout << "Parsed " << filename << "!" << std::endl;
 
         bool pure = false; // hook bindings if false
 

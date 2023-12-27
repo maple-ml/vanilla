@@ -7,7 +7,7 @@ project(vanilla CXX)
 
 set(CMAKE_GENERATOR_PLATFORM x64)
 
-CPMAddPackage("gh:geode-sdk/Broma#460f82d")
+CPMAddPackage("gh:geode-sdk/Broma#169af29")
 CPMAddPackage("gh:fmtlib/fmt#9.1.0")
 
 file(GLOB SOURCES *.cpp Broma/src/*.cpp)

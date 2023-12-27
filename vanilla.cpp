@@ -10,8 +10,6 @@ int main() {
 
     // parse file
 
-    std::cout << "Parsed file!" << std::endl;
-
 	vanilla::generate("src/bindings/geometrydash.bro", "src/bindings/geometry_dash_bindings.h", "src/bindings/geometry_dash_module.h");
 
     std::cout << "Generated code!" << std::endl;
