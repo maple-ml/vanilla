@@ -433,8 +433,13 @@ FodyWeavers.xsd
 out/
 
 build32/
+build64/
+build/
 CMakeCache.txt
 src/bindings/
 *.filters
 *.recipe
 cmake-build-release
+.vscode/
+geometry_dash_bindings.h
+geometry_dash_module.h
